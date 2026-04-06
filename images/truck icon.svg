@@ -3,7 +3,7 @@
   <g stroke="white" stroke-width="16" stroke-linejoin="round">
 
     <!-- Cargo box -->
-    <rect x="0" y="8" width="300" height="304" rx="20" fill="#124016"/>
+    <rect x="0" y="8" width="300" height="304" rx="20" fill="#FF6D1E"/>
 
     <!-- Cabin -->
     <path d="M334 116
@@ -11,11 +11,11 @@
              L505 212
              V312
              H334
-             Z" fill="#124016"/>
+             Z" fill="#FF6D1E"/>
 
     <!-- Wheels -->
-    <circle cx="102" cy="312" r="54" fill="#124016"/>
-    <circle cx="418" cy="312" r="54" fill="#124016"/>
+    <circle cx="102" cy="312" r="54" fill="#FF6D1E"/>
+    <circle cx="418" cy="312" r="54" fill="#FF6D1E"/>
 
   </g>
 
