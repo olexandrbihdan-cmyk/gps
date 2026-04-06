@@ -51,7 +51,6 @@ function addMarker(truck) {
     const marker = new google.maps.Marker({
         position: { lat: truck.lat, lng: truck.lng },
         map: map,
-        title: truck.truck_name,
         draggable: true,
         icon: {
             url: 'images/truck icon.svg',
@@ -63,6 +62,15 @@ function addMarker(truck) {
     // Клік на маркер - відкрити панель деталей
     marker.addListener('click', () => {
         openDetailPanel(truck);
+    });
+    
+    // Hover - показати картку
+    marker.addListener('mouseover', (event) => {
+        showHoverCard(truck, event.domEvent.clientX, event.domEvent.clientY);
+    });
+    
+    marker.addListener('mouseout', () => {
+        hideHoverCard();
     });
     
     // Dragging - оновити координати та адресу
