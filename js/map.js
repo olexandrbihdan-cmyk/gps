@@ -54,14 +54,7 @@ function addMarker(truck) {
         title: truck.truck_name,
         draggable: true,
         icon: {
-            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
-                    <circle cx="20" cy="20" r="18" fill="#4CAF50" stroke="white" stroke-width="2"/>
-                    <path d="M12 18 L12 22 L16 22 L16 26 L24 26 L24 22 L28 22 L28 18 L26 18 L26 14 L18 14 L18 18 Z" fill="white"/>
-                    <circle cx="17" cy="26" r="2" fill="white"/>
-                    <circle cx="23" cy="26" r="2" fill="white"/>
-                </svg>
-            `),
+            url: 'images/truck icon.svg',
             scaledSize: new google.maps.Size(40, 40),
             anchor: new google.maps.Point(20, 20)
         }
@@ -70,15 +63,6 @@ function addMarker(truck) {
     // Клік на маркер - відкрити панель деталей
     marker.addListener('click', () => {
         openDetailPanel(truck);
-    });
-    
-    // Hover - показати картку
-    marker.addListener('mouseover', (event) => {
-        showHoverCard(truck, event.domEvent.clientX, event.domEvent.clientY);
-    });
-    
-    marker.addListener('mouseout', () => {
-        hideHoverCard();
     });
     
     // Dragging - оновити координати та адресу

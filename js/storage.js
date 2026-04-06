@@ -1,7 +1,6 @@
 // LocalStorage управління для GPS Truck Tracker
 
 const STORAGE_KEY = 'gps_trucks';
-const COUNTER_KEY = 'gps_truck_counter';
 
 // Завантажити всі вантажівки з LocalStorage
 function loadTrucks() {
@@ -28,23 +27,13 @@ function saveTrucksToStorage(trucks) {
     }
 }
 
-// Отримати наступний номер вантажівки
-function getNextTruckNumber() {
-    try {
-        let counter = parseInt(localStorage.getItem(COUNTER_KEY) || '0');
-        counter++;
-        localStorage.setItem(COUNTER_KEY, counter.toString());
-        return counter;
-    } catch (error) {
-        console.error('Error getting truck counter:', error);
-        return 1;
-    }
-}
-
-// Згенерувати назву вантажівки
+// Згенерувати назву вантажівки у форматі WG + літера + 3 цифри + літера
 function generateTruckName() {
-    const number = getNextTruckNumber();
-    return `Pojazd ${String(number).padStart(3, '0')}`;
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const letter1 = letters[Math.floor(Math.random() * 26)];
+    const letter2 = letters[Math.floor(Math.random() * 26)];
+    const numbers = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    return `WG${letter1}${numbers}${letter2}`;
 }
 
 // Додати нову вантажівку
@@ -62,7 +51,7 @@ function addTruckToStorage(truckData) {
         datetime: truckData.datetime || formatDateTime(new Date()),
         speed: truckData.speed || '0',
         driving_status: truckData.driving_status || '00:00:00',
-        odometer: truckData.odometer || '0',
+        odometer: truckData.odometer || String(Math.floor(Math.random() * 130001) + 120000),
         rpm: truckData.rpm || '0',
         voltage: truckData.voltage || '24.5',
         satellites: truckData.satellites || '0',
@@ -119,7 +108,6 @@ function formatDateTime(date) {
 function clearAllData() {
     if (confirm('Видалити всі вантажівки? Цю дію не можна скасувати!')) {
         localStorage.removeItem(STORAGE_KEY);
-        localStorage.removeItem(COUNTER_KEY);
         location.reload();
     }
 }

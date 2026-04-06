@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 384">
+  <rect width="512" height="384" fill="white"/>
+
+  <!-- Cargo box -->
+  <rect x="0" y="8" width="300" height="304" rx="20" fill="#148A00"/>
+
+  <!-- Cabin -->
+  <path d="M334 116
+           H442
+           L494 178
+           V312
+           H334
+           Z" fill="#148A00"/>
+
+  <!-- Cabin window -->
+  <path d="M384 156
+           H438
+           L469 206
+           H384
+           Z" fill="white"/>
+
+  <!-- Bottom cut under cargo -->
+  <rect x="0" y="312" width="34" height="24" fill="white"/>
+
+  <!-- Gap between body and cabin -->
+  <rect x="300" y="116" width="34" height="220" fill="white"/>
+
+  <!-- Wheels -->
+  <circle cx="102" cy="312" r="54" fill="#148A00"/>
+  <circle cx="418" cy="312" r="54" fill="#148A00"/>
+</svg>
