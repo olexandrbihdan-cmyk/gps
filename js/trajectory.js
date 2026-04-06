@@ -9,10 +9,20 @@ let currentEditingPoint = null;
 
 // Initialize trajectory system
 function initTrajectories() {
-    // Add ESC key handler for exiting edit mode
+    // Add ESC key handler for exiting edit mode and closing point editor
     document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && isEditMode) {
-            exitEditMode();
+        if (event.key === 'Escape') {
+            // Close point editor if open
+            const pointEditor = document.getElementById('point-time-editor');
+            if (pointEditor && !pointEditor.classList.contains('hidden')) {
+                closePointTimeEditor();
+                return;
+            }
+            
+            // Exit edit mode if active
+            if (isEditMode) {
+                exitEditMode();
+            }
         }
     });
 }
@@ -379,10 +389,65 @@ function openPointTimeEditor(truck, pointIndex, x, y) {
     // Convert to datetime-local format or use current datetime
     input.value = toDateTimeLocal(point.datetime) || toDateTimeLocal(formatDateTime(new Date()));
     
-    // Position near click
-    editor.style.left = (x + 10) + 'px';
-    editor.style.top = (y + 10) + 'px';
+    // Calculate and display distances
+    updateDistanceDisplay(truck, pointIndex);
+    
+    // Position near click, but ensure it stays within viewport
+    const editorWidth = 280; // Approximate width
+    const editorHeight = 250; // Approximate height
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    
+    let left = x + 10;
+    let top = y + 10;
+    
+    // Adjust if going off right edge
+    if (left + editorWidth > viewportWidth) {
+        left = viewportWidth - editorWidth - 10;
+    }
+    
+    // Adjust if going off bottom edge
+    if (top + editorHeight > viewportHeight) {
+        top = viewportHeight - editorHeight - 10;
+    }
+    
+    // Ensure minimum distance from edges
+    left = Math.max(10, left);
+    top = Math.max(10, top);
+    
+    editor.style.left = left + 'px';
+    editor.style.top = top + 'px';
     editor.classList.remove('hidden');
+}
+
+// Update distance display in point editor
+function updateDistanceDisplay(truck, pointIndex) {
+    const point = truck.trajectory[pointIndex];
+    
+    // Distance from truck
+    const distanceFromTruck = calculateDistance(
+        truck.lat, 
+        truck.lng, 
+        point.lat, 
+        point.lng
+    );
+    document.getElementById('distance-from-truck').textContent = formatDistance(distanceFromTruck);
+    
+    // Distance from previous point
+    const prevContainer = document.getElementById('distance-from-prev-container');
+    if (pointIndex > 0) {
+        const prevPoint = truck.trajectory[pointIndex - 1];
+        const distanceFromPrev = calculateDistance(
+            prevPoint.lat, 
+            prevPoint.lng, 
+            point.lat, 
+            point.lng
+        );
+        document.getElementById('distance-from-prev').textContent = formatDistance(distanceFromPrev);
+        prevContainer.style.display = 'flex';
+    } else {
+        prevContainer.style.display = 'none';
+    }
 }
 
 // Save point time
@@ -414,6 +479,36 @@ function clearPointTime() {
 function closePointTimeEditor() {
     document.getElementById('point-time-editor').classList.add('hidden');
     currentEditingPoint = null;
+}
+
+// Calculate distance between two points in kilometers using Haversine formula
+function calculateDistance(lat1, lng1, lat2, lng2) {
+    const R = 6371; // Radius of Earth in kilometers
+    const dLat = toRadians(lat2 - lat1);
+    const dLng = toRadians(lng2 - lng1);
+    
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+              Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c;
+    
+    return distance;
+}
+
+// Convert degrees to radians
+function toRadians(degrees) {
+    return degrees * (Math.PI / 180);
+}
+
+// Format distance for display
+function formatDistance(distanceKm) {
+    if (distanceKm < 1) {
+        return (distanceKm * 1000).toFixed(0) + ' m';
+    } else {
+        return distanceKm.toFixed(2) + ' km';
+    }
 }
 
 // Update trajectory when truck moves

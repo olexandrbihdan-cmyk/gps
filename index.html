@@ -198,6 +198,19 @@
         <div class="time-editor-content">
             <label>Date & Time:</label>
             <input type="datetime-local" id="point-datetime-input" class="form-control">
+            
+            <!-- Distance Information -->
+            <div class="distance-info">
+                <div class="distance-row">
+                    <span class="distance-label">Від вантажівки:</span>
+                    <span id="distance-from-truck" class="distance-value">-</span>
+                </div>
+                <div id="distance-from-prev-container" class="distance-row" style="display: none;">
+                    <span class="distance-label">Від попередньої точки:</span>
+                    <span id="distance-from-prev" class="distance-value">-</span>
+                </div>
+            </div>
+            
             <div class="time-editor-buttons">
                 <button class="btn-small btn-save" onclick="savePointTime()">✓</button>
                 <button class="btn-small btn-clear" onclick="clearPointTime()">✗</button>

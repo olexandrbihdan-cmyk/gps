@@ -533,8 +533,42 @@ input[type="number"].form-control::-webkit-inner-spin-button {
 
 .time-editor-buttons {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     justify-content: center;
+}
+
+/* Distance info in point editor */
+.distance-info {
+    margin: 10px 0;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.distance-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    font-size: 13px;
+}
+
+.distance-row:not(:last-child) {
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+}
+
+.distance-label {
+    color: #666;
+    font-weight: 500;
+}
+
+.distance-value {
+    color: #2196F3;
+    font-weight: bold;
+    font-size: 14px;
 }
 
 .btn-small {
