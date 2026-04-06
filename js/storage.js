@@ -6,7 +6,35 @@ const STORAGE_KEY = 'gps_trucks';
 function loadTrucks() {
     try {
         const data = localStorage.getItem(STORAGE_KEY);
-        return data ? JSON.parse(data) : [];
+        let trucks = data ? JSON.parse(data) : [];
+        
+        // Міграція старих даних: time -> datetime
+        let needsSave = false;
+        trucks = trucks.map(truck => {
+            if (truck.trajectory && Array.isArray(truck.trajectory)) {
+                truck.trajectory = truck.trajectory.map(point => {
+                    // Конвертувати старе поле 'time' в 'datetime'
+                    if (point.time && !point.datetime) {
+                        const now = new Date();
+                        const day = String(now.getDate()).padStart(2, '0');
+                        const month = String(now.getMonth() + 1).padStart(2, '0');
+                        const year = now.getFullYear();
+                        point.datetime = `${point.time} ${day}.${month}.${year}`;
+                        delete point.time;
+                        needsSave = true;
+                    }
+                    return point;
+                });
+            }
+            return truck;
+        });
+        
+        // Зберегти мігровані дані
+        if (needsSave) {
+            saveTrucksToStorage(trucks);
+        }
+        
+        return trucks;
     } catch (error) {
         console.error('Error loading trucks from LocalStorage:', error);
         return [];
@@ -56,7 +84,9 @@ function addTruckToStorage(truckData) {
         voltage: truckData.voltage || '24.5',
         satellites: truckData.satellites || '0',
         fuel: truckData.fuel || '150',
-        driver_info: truckData.driver_info || ''
+        driver_info: truckData.driver_info || '',
+        trajectory: truckData.trajectory || [],
+        trajectoryColor: truckData.trajectoryColor || '#2196F3'
     };
     
     trucks.push(newTruck);

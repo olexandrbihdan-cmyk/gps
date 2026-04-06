@@ -17,11 +17,18 @@ async function initMap() {
     
     geocoder = new google.maps.Geocoder();
     
-    // Клік на карту для створення вантажівки
+    // Клік на карту для створення вантажівки або додавання точки траєкторії
     map.addListener('click', async (event) => {
         const lat = event.latLng.lat();
         const lng = event.latLng.lng();
         
+        // Якщо режим редагування траєкторії - тільки додавання точок
+        if (isEditMode && currentTruckId) {
+            addTrajectoryPoint(lat, lng);
+            return; // Заборонити створення вантажівки
+        }
+        
+        // Звичайний режим - створення вантажівки
         const address = await reverseGeocode(lat, lng);
         
         const truckData = {
@@ -100,6 +107,11 @@ function addMarker(truck) {
             // Оновити sidebar
             trucks = loadTrucks();
             updateSidebar(trucks);
+            
+            // Оновити траєкторію якщо вона показується
+            if (typeof updateTrajectoryOnTruckMove !== 'undefined') {
+                updateTrajectoryOnTruckMove(truck.id);
+            }
             
             // Якщо панель деталей відкрита для цієї вантажівки, оновити координати
             if (currentTruckId === truck.id) {

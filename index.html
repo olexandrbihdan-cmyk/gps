@@ -17,6 +17,17 @@
         <div class="sidebar-header">
             <h2>Lista Pojazdów</h2>
         </div>
+        
+        <!-- Кнопки експорту/імпорту -->
+        <div class="data-management">
+            <button class="btn btn-export" onclick="exportAllData()">
+                📥 Export Data
+            </button>
+            <button class="btn btn-import" onclick="importAllData()">
+                📤 Import Data
+            </button>
+        </div>
+        
         <div id="truck-list"></div>
     </div>
 
@@ -111,13 +122,76 @@
                 <button class="btn btn-delete" onclick="confirmDelete()">Usuń</button>
                 <button class="btn btn-cancel" onclick="closeDetailPanel()">Anuluj</button>
             </div>
+            
+            <!-- Кнопки експорту/імпорту в панелі деталей -->
+            <div class="data-management-panel">
+                <button class="btn btn-export-small" onclick="exportAllData()">
+                    📥 Export All
+                </button>
+                <button class="btn btn-import-small" onclick="importAllData()">
+                    📤 Import
+                </button>
+            </div>
+            
+            <div class="trajectory-controls">
+                <button class="btn btn-trajectory-edit" onclick="toggleEditTrajectory()">
+                    📍 Edit Trajectory
+                </button>
+                <button class="btn btn-trajectory-show" onclick="toggleTrajectoryVisibility()">
+                    👁️ Show Trajectory
+                </button>
+                <button class="btn btn-trajectory-clear" onclick="clearTrajectory()">
+                    🗑️ Clear Trajectory
+                </button>
+            </div>
         </div>
     </div>
 
     <div id="hover-card" class="hover-card hidden"></div>
 
     <div id="mobile-card-backdrop" class="mobile-card-backdrop" onclick="closeMobileCard()"></div>
+    
+    <!-- Мінімальна панель редагування траєкторії -->
+    <div id="trajectory-edit-panel" class="trajectory-edit-panel hidden">
+        <div class="trajectory-panel-header">
+            <h3>Trajectory: <span id="trajectory-truck-name"></span></h3>
+            <button class="close-panel" onclick="closeTrajectoryEditPanel()">×</button>
+        </div>
+        <div class="trajectory-panel-buttons">
+            <button class="btn btn-trajectory-save" onclick="saveAndExitEditMode()">
+                📍 Save and Exit Edit Mode
+            </button>
+            <button class="btn btn-trajectory-show" onclick="toggleTrajectoryVisibility()">
+                👁️ Show Trajectory
+            </button>
+            <button class="btn btn-trajectory-clear" onclick="clearTrajectory()">
+                🗑️ Clear Trajectory
+            </button>
+        </div>
+    </div>
+    
+    <div id="trajectory-hint" class="trajectory-hint hidden">
+        Click on the map to add trajectory points. Drag points to adjust them. Right-click to delete.
+    </div>
+    
+    <div id="point-time-editor" class="point-time-editor hidden">
+        <div class="time-editor-content">
+            <label>Date & Time:</label>
+            <input type="datetime-local" id="point-datetime-input" class="form-control">
+            <div class="time-editor-buttons">
+                <button class="btn-small btn-save" onclick="savePointTime()">✓</button>
+                <button class="btn-small btn-clear" onclick="clearPointTime()">✗</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="trajectory-tooltip" class="trajectory-tooltip hidden">
+        <span id="tooltip-time"></span>
+    </div>
 
+    <!-- Hidden file input for import -->
+    <input type="file" id="import-file-input" accept=".json" style="display: none;" onchange="handleImportFile(event)">
+    
     <div id="confirm-modal" class="modal hidden">
         <div class="modal-content">
             <h3>Potwierdzenie</h3>
@@ -131,6 +205,7 @@
 
     <script src="js/storage.js"></script>
     <script src="js/ui.js"></script>
+    <script src="js/trajectory.js"></script>
     <script src="js/map.js"></script>
     <script src="js/app.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAswIkVsNbCGVderLW6M70L_fCcmNMpR7A&callback=initMap&libraries=places" async defer></script>

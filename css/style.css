@@ -423,6 +423,304 @@ input[type="number"].form-control::-webkit-inner-spin-button {
     display: block;
 }
 
+/* Trajectory Controls */
+.trajectory-controls {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #ddd;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-trajectory-edit,
+.btn-trajectory-show,
+.btn-trajectory-clear {
+    flex: 1;
+    min-width: 120px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.btn-trajectory-edit {
+    background: #2196F3;
+    color: white;
+}
+
+.btn-trajectory-edit:hover {
+    background: #1976D2;
+}
+
+.btn-trajectory-edit.active {
+    background: #FF9800;
+}
+
+.btn-trajectory-show {
+    background: #4CAF50;
+    color: white;
+}
+
+.btn-trajectory-show:hover {
+    background: #45a049;
+}
+
+.btn-trajectory-clear {
+    background: #f44336;
+    color: white;
+}
+
+.btn-trajectory-clear:hover {
+    background: #da190b;
+}
+
+/* Trajectory Hint */
+.trajectory-hint {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(33, 150, 243, 0.95);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    z-index: 1100;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    pointer-events: none;
+}
+
+.trajectory-hint.hidden {
+    display: none;
+}
+
+/* Point Time Editor */
+.point-time-editor {
+    position: fixed;
+    background: white;
+    border: 2px solid #2196F3;
+    border-radius: 8px;
+    padding: 15px;
+    z-index: 1600;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    min-width: 200px;
+}
+
+.point-time-editor.hidden {
+    display: none;
+}
+
+.time-editor-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.time-editor-content label {
+    font-weight: bold;
+    color: #333;
+    font-size: 14px;
+}
+
+.time-editor-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.btn-small {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+.btn-small.btn-save {
+    background: #4CAF50;
+    color: white;
+}
+
+.btn-small.btn-save:hover {
+    background: #45a049;
+}
+
+.btn-small.btn-clear {
+    background: #f44336;
+    color: white;
+}
+
+.btn-small.btn-clear:hover {
+    background: #da190b;
+}
+
+/* Trajectory Tooltip */
+.trajectory-tooltip {
+    position: fixed;
+    background: rgba(0,0,0,0.85);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    pointer-events: none;
+    z-index: 1500;
+    white-space: nowrap;
+}
+
+.trajectory-tooltip.hidden {
+    display: none;
+}
+
+/* Trajectory Edit Panel (Minimal) */
+.trajectory-edit-panel {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: white;
+    border: 2px solid #2196F3;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    z-index: 1200;
+    min-width: 280px;
+    max-width: 350px;
+}
+
+.trajectory-edit-panel.hidden {
+    display: none;
+}
+
+.trajectory-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #2196F3;
+}
+
+.trajectory-panel-header h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #2196F3;
+}
+
+.close-panel {
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #999;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.close-panel:hover {
+    color: #f44336;
+}
+
+.trajectory-panel-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.trajectory-panel-buttons .btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+}
+
+/* Data Management in Sidebar */
+.data-management {
+    padding: 15px;
+    border-bottom: 2px solid #ddd;
+    display: flex;
+    gap: 10px;
+}
+
+.data-management .btn {
+    flex: 1;
+    padding: 10px;
+    font-size: 13px;
+}
+
+.btn-export {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-export:hover {
+    background: #45a049;
+}
+
+.btn-import {
+    background: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-import:hover {
+    background: #1976D2;
+}
+
+/* Data Management in Detail Panel */
+.data-management-panel {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #ddd;
+    display: flex;
+    gap: 10px;
+}
+
+.data-management-panel .btn {
+    flex: 1;
+    padding: 10px;
+    font-size: 13px;
+}
+
+.btn-export-small {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-export-small:hover {
+    background: #45a049;
+}
+
+.btn-import-small {
+    background: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-import-small:hover {
+    background: #1976D2;
+}
+
 /* Modal */
 .modal {
     position: fixed;
