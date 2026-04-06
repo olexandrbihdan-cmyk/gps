@@ -17,33 +17,23 @@ async function initMap() {
     
     geocoder = new google.maps.Geocoder();
     
-    // Клік на карту для створення вантажівки або додавання точки траєкторії
+    // Правий клік для контекстного меню
+    map.addListener('rightclick', (event) => {
+        showContextMenu(event);
+    });
+    
+    // Лівий клік тільки для траєкторії
     map.addListener('click', async (event) => {
-        const lat = event.latLng.lat();
-        const lng = event.latLng.lng();
+        // Закрити контекстне меню якщо відкрите
+        hideContextMenu();
         
         // Якщо режим редагування траєкторії - тільки додавання точок
         if (isEditMode && currentTruckId) {
+            const lat = event.latLng.lat();
+            const lng = event.latLng.lng();
             addTrajectoryPoint(lat, lng);
-            return; // Заборонити створення вантажівки
         }
-        
-        // Звичайний режим - створення вантажівки
-        const address = await reverseGeocode(lat, lng);
-        
-        const truckData = {
-            lat: lat,
-            lng: lng,
-            address: address
-        };
-        
-        const truck = addTruckToStorage(truckData);
-        
-        if (truck) {
-            trucks.push(truck);
-            addMarker(truck);
-            updateSidebar(trucks);
-        }
+        // Видалено створення вантажівки лівим кліком
     });
     
     // Завантажити існуючі вантажівки
@@ -52,6 +42,9 @@ async function initMap() {
         addMarker(truck);
     });
     updateSidebar(trucks);
+    
+    // Автоматично підлаштувати карту під вантажівки
+    fitMapToAllTrucks();
 }
 
 function addMarker(truck) {
@@ -248,4 +241,97 @@ function deleteTruck() {
     
     closeConfirmModal();
     closeDetailPanel();
+}
+
+// Context menu position
+let contextMenuPosition = null;
+
+// Show context menu
+function showContextMenu(event) {
+    const menu = document.getElementById('context-menu');
+    
+    // Зберегти позицію для створення вантажівки
+    contextMenuPosition = {
+        lat: event.latLng.lat(),
+        lng: event.latLng.lng()
+    };
+    
+    // Позиціонувати меню в точці кліку
+    menu.style.left = event.domEvent.clientX + 'px';
+    menu.style.top = event.domEvent.clientY + 'px';
+    menu.classList.remove('hidden');
+    
+    // Додати listener для закриття при кліку поза меню
+    setTimeout(() => {
+        document.addEventListener('click', hideContextMenuOutside);
+    }, 0);
+}
+
+// Hide context menu
+function hideContextMenu() {
+    const menu = document.getElementById('context-menu');
+    menu.classList.add('hidden');
+    contextMenuPosition = null;
+    document.removeEventListener('click', hideContextMenuOutside);
+}
+
+// Hide context menu when clicking outside
+function hideContextMenuOutside(event) {
+    const menu = document.getElementById('context-menu');
+    if (!menu.contains(event.target)) {
+        hideContextMenu();
+    }
+}
+
+// Create truck from context menu
+async function createTruckFromContextMenu() {
+    if (!contextMenuPosition) return;
+    
+    const lat = contextMenuPosition.lat;
+    const lng = contextMenuPosition.lng;
+    
+    hideContextMenu();
+    
+    const address = await reverseGeocode(lat, lng);
+    
+    const truckData = {
+        lat: lat,
+        lng: lng,
+        address: address
+    };
+    
+    const truck = addTruckToStorage(truckData);
+    
+    if (truck) {
+        trucks.push(truck);
+        addMarker(truck);
+        updateSidebar(trucks);
+    }
+}
+
+// Fit map to all trucks
+function fitMapToAllTrucks() {
+    if (trucks.length === 0) {
+        // Немає вантажівок - залишити центр на Варшаві
+        return;
+    }
+    
+    if (trucks.length === 1) {
+        // Одна вантажівка - центрувати на ній з помірним zoom
+        map.setCenter({ lat: trucks[0].lat, lng: trucks[0].lng });
+        map.setZoom(10); // Помірний zoom замість 50 метрів
+        return;
+    }
+    
+    // Кілька вантажівок - показати всі
+    const bounds = new google.maps.LatLngBounds();
+    trucks.forEach(truck => {
+        bounds.extend({ lat: truck.lat, lng: truck.lng });
+    });
+    
+    map.fitBounds(bounds);
+    
+    // Додати padding для кращого вигляду
+    const padding = { top: 50, right: 50, bottom: 50, left: 350 }; // left 350 для sidebar
+    map.fitBounds(bounds, padding);
 }

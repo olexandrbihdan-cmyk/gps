@@ -100,34 +100,32 @@
                 </div>
             </div>
             
-            <div class="form-row">
+            <div class="form-row three-columns">
                 <div class="form-group">
-                    <label>Prędkość (km/h):</label>
+                    <label>Prędkość:</label>
                     <input type="text" id="speed" class="form-control">
                 </div>
                 
                 <div class="form-group">
-                    <label>Status Jazdy:</label>
-                    <input type="text" id="driving_status" class="form-control" placeholder="00:00:00">
-                </div>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Licznik (km):</label>
+                    <label>Licznik:</label>
                     <input type="text" id="odometer" class="form-control">
                 </div>
                 
                 <div class="form-group">
-                    <label>Obroty (r/min):</label>
-                    <input type="text" id="rpm" class="form-control">
+                    <label>Napięcie:</label>
+                    <input type="text" id="voltage" class="form-control">
                 </div>
             </div>
             
-            <div class="form-row">
+            <div class="form-row three-columns">
                 <div class="form-group">
-                    <label>Napięcie (V):</label>
-                    <input type="text" id="voltage" class="form-control">
+                    <label>Status:</label>
+                    <input type="text" id="driving_status" class="form-control" placeholder="00:00:00">
+                </div>
+                
+                <div class="form-group">
+                    <label>Obroty:</label>
+                    <input type="text" id="rpm" class="form-control">
                 </div>
                 
                 <div class="form-group">
@@ -142,8 +140,8 @@
             </div>
             
             <div class="form-group">
-                <label>Informacje o kierowcy/trasie:</label>
-                <textarea id="driver_info" class="form-control" rows="3"></textarea>
+                <label>Informacje:</label>
+                <textarea id="driver_info" class="form-control" rows="2"></textarea>
             </div>
             
             <div class="button-group">
@@ -196,10 +194,6 @@
         </div>
     </div>
     
-    <div id="trajectory-hint" class="trajectory-hint hidden">
-        Click on the map to add trajectory points. Drag points to adjust them. Right-click to delete.
-    </div>
-    
     <div id="point-time-editor" class="point-time-editor hidden">
         <div class="time-editor-content">
             <label>Date & Time:</label>
@@ -226,6 +220,13 @@
                 <button class="btn btn-delete" onclick="deleteTruck()">Usuń</button>
                 <button class="btn btn-cancel" onclick="closeConfirmModal()">Anuluj</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Context Menu -->
+    <div id="context-menu" class="context-menu hidden">
+        <div class="context-menu-item" onclick="createTruckFromContextMenu()">
+            🚚 Dodać nowy pojazd
         </div>
     </div>
 

@@ -47,9 +47,6 @@ function enterEditMode() {
         map.setOptions({ draggableCursor: 'crosshair' });
     }
     
-    // Show hint
-    document.getElementById('trajectory-hint').classList.remove('hidden');
-    
     // Update button style
     const editBtn = document.querySelector('.btn-trajectory-edit');
     if (editBtn) {
@@ -72,9 +69,6 @@ function exitEditMode() {
     if (map) {
         map.setOptions({ draggableCursor: null });
     }
-    
-    // Hide hint
-    document.getElementById('trajectory-hint').classList.add('hidden');
     
     // Update button style
     const editBtn = document.querySelector('.btn-trajectory-edit');
@@ -332,6 +326,9 @@ function toggleTrajectoryVisibility() {
         
         // Fit map to trajectory (only when showing)
         fitMapToTrajectory(truck);
+        
+        // Close detail panel to show trajectory better
+        closeDetailPanel();
     }
 }
 
