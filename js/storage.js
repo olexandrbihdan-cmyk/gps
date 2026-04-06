@@ -1,0 +1,158 @@
+// LocalStorage управління для GPS Truck Tracker
+
+const STORAGE_KEY = 'gps_trucks';
+const COUNTER_KEY = 'gps_truck_counter';
+
+// Завантажити всі вантажівки з LocalStorage
+function loadTrucks() {
+    try {
+        const data = localStorage.getItem(STORAGE_KEY);
+        return data ? JSON.parse(data) : [];
+    } catch (error) {
+        console.error('Error loading trucks from LocalStorage:', error);
+        return [];
+    }
+}
+
+// Зберегти всі вантажівки в LocalStorage
+function saveTrucksToStorage(trucks) {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(trucks));
+        return true;
+    } catch (error) {
+        console.error('Error saving trucks to LocalStorage:', error);
+        if (error.name === 'QuotaExceededError') {
+            alert('LocalStorage заповнений! Видаліть деякі вантажівки.');
+        }
+        return false;
+    }
+}
+
+// Отримати наступний номер вантажівки
+function getNextTruckNumber() {
+    try {
+        let counter = parseInt(localStorage.getItem(COUNTER_KEY) || '0');
+        counter++;
+        localStorage.setItem(COUNTER_KEY, counter.toString());
+        return counter;
+    } catch (error) {
+        console.error('Error getting truck counter:', error);
+        return 1;
+    }
+}
+
+// Згенерувати назву вантажівки
+function generateTruckName() {
+    const number = getNextTruckNumber();
+    return `Pojazd ${String(number).padStart(3, '0')}`;
+}
+
+// Додати нову вантажівку
+function addTruckToStorage(truckData) {
+    const trucks = loadTrucks();
+    
+    // Генеруємо ID (максимальний ID + 1)
+    const maxId = trucks.length > 0 ? Math.max(...trucks.map(t => t.id)) : 0;
+    const newTruck = {
+        id: maxId + 1,
+        truck_name: truckData.truck_name || generateTruckName(),
+        lat: truckData.lat,
+        lng: truckData.lng,
+        address: truckData.address || '',
+        datetime: truckData.datetime || formatDateTime(new Date()),
+        speed: truckData.speed || '0',
+        driving_status: truckData.driving_status || '00:00:00',
+        odometer: truckData.odometer || '0',
+        rpm: truckData.rpm || '0',
+        voltage: truckData.voltage || '24.5',
+        satellites: truckData.satellites || '0',
+        fuel: truckData.fuel || '150',
+        driver_info: truckData.driver_info || ''
+    };
+    
+    trucks.push(newTruck);
+    saveTrucksToStorage(trucks);
+    
+    return newTruck;
+}
+
+// Оновити вантажівку
+function updateTruckInStorage(id, updatedData) {
+    const trucks = loadTrucks();
+    const index = trucks.findIndex(t => t.id === id);
+    
+    if (index !== -1) {
+        trucks[index] = { ...trucks[index], ...updatedData };
+        saveTrucksToStorage(trucks);
+        return trucks[index];
+    }
+    
+    return null;
+}
+
+// Видалити вантажівку
+function deleteTruckFromStorage(id) {
+    let trucks = loadTrucks();
+    trucks = trucks.filter(t => t.id !== id);
+    saveTrucksToStorage(trucks);
+    return true;
+}
+
+// Отримати вантажівку за ID
+function getTruckById(id) {
+    const trucks = loadTrucks();
+    return trucks.find(t => t.id === id);
+}
+
+// Форматування дати/часу
+function formatDateTime(date) {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    
+    return `${day}.${month}.${year} ${hours}:${minutes}`;
+}
+
+// Очистити всі дані (для тестування)
+function clearAllData() {
+    if (confirm('Видалити всі вантажівки? Цю дію не можна скасувати!')) {
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(COUNTER_KEY);
+        location.reload();
+    }
+}
+
+// Експорт даних в JSON (опціонально)
+function exportData() {
+    const trucks = loadTrucks();
+    const dataStr = JSON.stringify(trucks, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `gps-trucks-${Date.now()}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+}
+
+// Імпорт даних з JSON (опціонально)
+function importData(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const trucks = JSON.parse(e.target.result);
+            if (Array.isArray(trucks)) {
+                saveTrucksToStorage(trucks);
+                location.reload();
+            } else {
+                alert('Невірний формат файлу!');
+            }
+        } catch (error) {
+            alert('Помилка читання файлу!');
+            console.error(error);
+        }
+    };
+    reader.readAsText(file);
+}

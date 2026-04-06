@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GPS Truck Tracker Demo</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <button id="menu-toggle" class="menu-toggle" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <h2>Lista Pojazdów</h2>
+        </div>
+        <div id="truck-list"></div>
+    </div>
+
+    <div id="map"></div>
+
+    <div id="detail-panel" class="detail-panel hidden">
+        <div class="detail-header">
+            <h3 id="detail-title">Pojazd</h3>
+            <button class="close-btn" onclick="closeDetailPanel()">&times;</button>
+        </div>
+        <div class="detail-content">
+            <div class="form-group">
+                <label>Nazwa pojazdu:</label>
+                <input type="text" id="truck_name" class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label>Adres/Lokacja:</label>
+                <input type="text" id="address" class="form-control">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Latitude:</label>
+                    <input type="number" step="0.000001" id="latitude" class="form-control" onchange="updateMarkerFromCoords()">
+                </div>
+                
+                <div class="form-group">
+                    <label>Longitude:</label>
+                    <input type="number" step="0.000001" id="longitude" class="form-control" onchange="updateMarkerFromCoords()">
+                </div>
+            </div>
+            
+            <div class="form-group datetime-group">
+                <label>Data/Czas:</label>
+                <div class="datetime-wrapper">
+                    <input type="text" id="datetime" class="form-control">
+                    <button class="btn-update-time" onclick="updateDateTime()" title="Aktualizuj czas">
+                        🕐
+                    </button>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Prędkość (km/h):</label>
+                    <input type="text" id="speed" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label>Status Jazdy:</label>
+                    <input type="text" id="driving_status" class="form-control" placeholder="00:00:00">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Licznik (km):</label>
+                    <input type="text" id="odometer" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label>Obroty (r/min):</label>
+                    <input type="text" id="rpm" class="form-control">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Napięcie (V):</label>
+                    <input type="text" id="voltage" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label>Satelity:</label>
+                    <input type="text" id="satellites" class="form-control">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Paliwo (L):</label>
+                <input type="text" id="fuel" class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label>Informacje o kierowcy/trasie:</label>
+                <textarea id="driver_info" class="form-control" rows="3"></textarea>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn btn-save" onclick="saveTruck()">Zapisz</button>
+                <button class="btn btn-delete" onclick="confirmDelete()">Usuń</button>
+                <button class="btn btn-cancel" onclick="closeDetailPanel()">Anuluj</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="hover-card" class="hover-card hidden"></div>
+
+    <div id="confirm-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Potwierdzenie</h3>
+            <p>Czy na pewno chcesz usunąć ten pojazd?</p>
+            <div class="modal-buttons">
+                <button class="btn btn-delete" onclick="deleteTruck()">Usuń</button>
+                <button class="btn btn-cancel" onclick="closeConfirmModal()">Anuluj</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/app.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAswIkVsNbCGVderLW6M70L_fCcmNMpR7A&callback=initMap&libraries=places" async defer></script>
+</body>
+</html>

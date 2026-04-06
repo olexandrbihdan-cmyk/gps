@@ -1,0 +1,598 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Hamburger Menu Button */
+.menu-toggle {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1001;
+    background: #4CAF50;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    transition: all 0.3s;
+}
+
+.menu-toggle:hover {
+    background: #45a049;
+}
+
+.menu-toggle span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background: white;
+    border-radius: 2px;
+    transition: all 0.3s;
+}
+
+/* Map */
+#map {
+    position: absolute;
+    top: 0;
+    left: 250px;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    transition: left 0.3s;
+}
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 250px;
+    height: 100vh;
+    background: #f5f5f5;
+    border-right: 2px solid #ddd;
+    overflow-y: auto;
+    z-index: 100;
+    transition: transform 0.3s;
+}
+
+.sidebar-header {
+    background: #4CAF50;
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+
+.sidebar-header h2 {
+    font-size: 18px;
+    margin: 0;
+}
+
+#truck-list {
+    padding: 10px;
+}
+
+.no-trucks {
+    padding: 20px;
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+}
+
+.truck-item {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.truck-item:hover {
+    background: #e8f5e9;
+    border-color: #4CAF50;
+    transform: translateX(3px);
+}
+
+.truck-item:active {
+    transform: translateX(1px);
+}
+
+.truck-item-name {
+    font-weight: bold;
+    color: #4CAF50;
+    margin-bottom: 5px;
+}
+
+.truck-item-address {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.truck-item-details {
+    font-size: 11px;
+    color: #999;
+}
+
+/* Detail Panel */
+.detail-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 450px;
+    max-width: 90vw;
+    max-height: 90vh;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.detail-panel.hidden {
+    display: none;
+}
+
+.detail-header {
+    background: #4CAF50;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.detail-header h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+}
+
+.close-btn:hover {
+    opacity: 0.8;
+}
+
+.detail-content {
+    padding: 20px;
+    max-height: calc(90vh - 60px);
+    overflow-y: auto;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 13px;
+    color: #333;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+}
+
+textarea.form-control {
+    resize: vertical;
+    font-family: Arial, sans-serif;
+}
+
+input[type="number"].form-control {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+input[type="number"].form-control::-webkit-outer-spin-button,
+input[type="number"].form-control::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.datetime-group {
+    position: relative;
+}
+
+.datetime-wrapper {
+    display: flex;
+    gap: 5px;
+}
+
+.datetime-wrapper input {
+    flex: 1;
+}
+
+.btn-update-time {
+    padding: 10px 12px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.2s;
+    min-width: 44px;
+}
+
+.btn-update-time:hover {
+    background: #45a049;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.2s;
+    min-height: 44px;
+}
+
+.btn-save {
+    background: #4CAF50;
+    color: white;
+}
+
+.btn-save:hover {
+    background: #45a049;
+}
+
+.btn-delete {
+    background: #f44336;
+    color: white;
+}
+
+.btn-delete:hover {
+    background: #da190b;
+}
+
+.btn-cancel {
+    background: #9e9e9e;
+    color: white;
+}
+
+.btn-cancel:hover {
+    background: #757575;
+}
+
+/* Hover Card */
+.hover-card {
+    position: absolute;
+    background: white;
+    border: 2px solid #4CAF50;
+    border-radius: 8px;
+    padding: 0;
+    z-index: 999;
+    pointer-events: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    min-width: 280px;
+    max-width: 350px;
+}
+
+.hover-card.hidden {
+    display: none;
+}
+
+.hover-card-header {
+    background: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px 6px 0 0;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.hover-card-content {
+    padding: 12px 15px;
+    font-size: 12px;
+}
+
+.hover-card-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #eee;
+}
+
+.hover-card-row:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.hover-card-label {
+    color: #666;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.hover-card-value {
+    color: #333;
+    text-align: right;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    text-align: center;
+    min-width: 300px;
+    max-width: 90vw;
+}
+
+.modal-content h3 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.modal-content p {
+    margin-bottom: 20px;
+    color: #666;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.modal-buttons .btn {
+    min-width: 100px;
+}
+
+/* ========================================
+   MOBILE RESPONSIVE STYLES
+   ======================================== */
+
+@media screen and (max-width: 768px) {
+    /* Show hamburger menu */
+    .menu-toggle {
+        display: flex;
+    }
+    
+    /* Hide sidebar by default on mobile */
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    
+    /* Show sidebar when active */
+    .sidebar.active {
+        transform: translateX(0);
+        box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+    }
+    
+    /* Map takes full width on mobile */
+    #map {
+        left: 0;
+    }
+    
+    /* Detail panel full width on mobile */
+    .detail-panel {
+        width: 100%;
+        max-width: 100vw;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+        top: 0;
+        left: 0;
+        transform: none;
+    }
+    
+    .detail-content {
+        max-height: calc(100vh - 60px);
+        padding: 15px;
+    }
+    
+    /* Stack form rows on mobile */
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    /* Larger touch targets */
+    .btn {
+        min-height: 48px;
+        font-size: 16px;
+    }
+    
+    .form-control {
+        min-height: 44px;
+        font-size: 16px;
+    }
+    
+    .truck-item {
+        padding: 12px;
+        min-height: 60px;
+    }
+    
+    /* Hover card adjustments for mobile */
+    .hover-card {
+        display: none !important; /* Disable hover on mobile */
+    }
+    
+    /* Modal adjustments */
+    .modal-content {
+        padding: 20px;
+        margin: 15px;
+    }
+    
+    .modal-buttons {
+        flex-direction: column;
+    }
+    
+    .modal-buttons .btn {
+        width: 100%;
+    }
+}
+
+/* Tablet landscape */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    .sidebar {
+        width: 220px;
+    }
+    
+    #map {
+        left: 220px;
+    }
+    
+    .detail-panel {
+        width: 400px;
+    }
+}
+
+/* Small mobile devices */
+@media screen and (max-width: 480px) {
+    .sidebar-header h2 {
+        font-size: 16px;
+    }
+    
+    .truck-item-name {
+        font-size: 14px;
+    }
+    
+    .detail-header h3 {
+        font-size: 16px;
+    }
+    
+    .form-group label {
+        font-size: 12px;
+    }
+    
+    .button-group {
+        flex-direction: column;
+    }
+    
+    .button-group .btn {
+        width: 100%;
+    }
+}
+
+/* Landscape orientation on mobile */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+    .detail-panel {
+        max-height: 100vh;
+    }
+    
+    .detail-content {
+        max-height: calc(100vh - 60px);
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .truck-item:hover {
+        transform: none;
+    }
+    
+    .truck-item:active {
+        background: #e8f5e9;
+        border-color: #4CAF50;
+    }
+    
+    .btn:active {
+        transform: scale(0.98);
+    }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .form-control,
+    .btn {
+        -webkit-font-smoothing: antialiased;
+    }
+}
+
+/* Print styles */
+@media print {
+    .sidebar,
+    .menu-toggle,
+    .detail-panel,
+    .hover-card,
+    .modal {
+        display: none !important;
+    }
+    
+    #map {
+        left: 0;
+        position: relative;
+        height: 100vh;
+    }
+}
