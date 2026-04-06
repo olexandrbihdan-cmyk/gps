@@ -372,14 +372,15 @@ input[type="number"].form-control::-webkit-inner-spin-button {
 
 /* Mobile Popup Card */
 .hover-card.mobile-popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1500;
-    pointer-events: auto;
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 1500 !important;
+    pointer-events: auto !important;
     max-width: 90vw;
     box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    display: block !important;
 }
 
 .close-mobile-card {

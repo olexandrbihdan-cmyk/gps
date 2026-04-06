@@ -110,6 +110,10 @@ function showMobileCard(truck) {
     const card = document.getElementById('hover-card');
     const backdrop = document.getElementById('mobile-card-backdrop');
     
+    // Очистити inline стилі від hover
+    card.style.left = '';
+    card.style.top = '';
+    
     const content = `
         <button class="close-mobile-card" onclick="closeMobileCard()">&times;</button>
         <div class="hover-card-header">${truck.truck_name}</div>
