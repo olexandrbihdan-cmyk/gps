@@ -59,9 +59,15 @@ function addMarker(truck) {
         }
     });
     
-    // Клік на маркер - відкрити панель деталей
+    // Клік на маркер - mobile: popup картка, desktop: повна панель
     marker.addListener('click', () => {
-        openDetailPanel(truck);
+        if (isMobileDevice()) {
+            // Mobile: показати popup картку
+            showMobileCard(truck);
+        } else {
+            // Desktop: відкрити повну панель деталей
+            openDetailPanel(truck);
+        }
     });
     
     // Hover - показати картку

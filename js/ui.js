@@ -1,5 +1,10 @@
 let currentTruckId = null;
 
+// Визначення мобільного пристрою
+function isMobileDevice() {
+    return window.innerWidth <= 768;
+}
+
 // Toggle sidebar для мобільних
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
@@ -90,7 +95,64 @@ function showHoverCard(truck, x, y) {
 }
 
 function hideHoverCard() {
-    document.getElementById('hover-card').classList.add('hidden');
+    const card = document.getElementById('hover-card');
+    
+    // Не ховати якщо це mobile popup
+    if (card.classList.contains('mobile-popup')) {
+        return;
+    }
+    
+    card.classList.add('hidden');
+}
+
+// Показати mobile popup картку
+function showMobileCard(truck) {
+    const card = document.getElementById('hover-card');
+    const backdrop = document.getElementById('mobile-card-backdrop');
+    
+    const content = `
+        <button class="close-mobile-card" onclick="closeMobileCard()">&times;</button>
+        <div class="hover-card-header">${truck.truck_name}</div>
+        <div class="hover-card-content">
+            <div class="hover-card-row">
+                <span class="hover-card-label">Adres:</span>
+                <span class="hover-card-value">${truck.address || 'N/A'}</span>
+            </div>
+            <div class="hover-card-row">
+                <span class="hover-card-label">Data/Czas:</span>
+                <span class="hover-card-value">${truck.datetime || 'N/A'}</span>
+            </div>
+            <div class="hover-card-row">
+                <span class="hover-card-label">Prędkość:</span>
+                <span class="hover-card-value">${truck.speed} km/h</span>
+            </div>
+            <div class="hover-card-row">
+                <span class="hover-card-label">Licznik:</span>
+                <span class="hover-card-value">${truck.odometer} km</span>
+            </div>
+            <div class="hover-card-row">
+                <span class="hover-card-label">Napięcie:</span>
+                <span class="hover-card-value">${truck.voltage} V</span>
+            </div>
+        </div>
+    `;
+    
+    card.innerHTML = content;
+    card.classList.add('mobile-popup');
+    card.classList.remove('hidden');
+    
+    // Показати backdrop
+    backdrop.classList.add('active');
+}
+
+// Закрити mobile popup картку
+function closeMobileCard() {
+    const card = document.getElementById('hover-card');
+    const backdrop = document.getElementById('mobile-card-backdrop');
+    
+    card.classList.remove('mobile-popup');
+    card.classList.add('hidden');
+    backdrop.classList.remove('active');
 }
 
 function updateSidebar(trucks) {
