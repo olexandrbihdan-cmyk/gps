@@ -24,7 +24,15 @@ function toggleEditTrajectory() {
     if (isEditMode) {
         exitEditMode();
     } else {
-        enterEditMode();
+        // Get truck BEFORE closing panel (closeDetailPanel resets currentTruckId)
+        const truck = getTruckById(currentTruckId);
+        if (!truck) return;
+        
+        // Close detail panel
+        closeDetailPanel();
+        
+        // Open minimal trajectory panel
+        openTrajectoryEditPanel(truck);
     }
 }
 
@@ -194,12 +202,16 @@ function createPointMarker(truck, point, index) {
     });
     
     // Drag to move
-    marker.addListener('dragend', (event) => {
+    marker.addListener('dragend', async (event) => {
         const newLat = event.latLng.lat();
         const newLng = event.latLng.lng();
         
         truck.trajectory[index].lat = newLat;
         truck.trajectory[index].lng = newLng;
+        
+        // Update address
+        const newAddress = await reverseGeocode(newLat, newLng);
+        truck.trajectory[index].address = newAddress || 'Unknown location';
         
         updateTruckInStorage(truck.id, { trajectory: truck.trajectory });
         updatePolyline(truck);
@@ -209,7 +221,7 @@ function createPointMarker(truck, point, index) {
 }
 
 // Add trajectory point
-function addTrajectoryPoint(lat, lng) {
+async function addTrajectoryPoint(lat, lng) {
     if (!isEditMode || !currentTruckId) return;
     
     const truck = getTruckById(currentTruckId);
@@ -219,11 +231,19 @@ function addTrajectoryPoint(lat, lng) {
         truck.trajectory = [];
     }
     
-    // Add point with current datetime
+    // Add point with current datetime and address
     const now = new Date();
     const datetime = formatDateTime(now);
     
-    truck.trajectory.push({ lat, lng, datetime: datetime });
+    // Get address via reverse geocoding
+    const address = await reverseGeocode(lat, lng);
+    
+    truck.trajectory.push({ 
+        lat, 
+        lng, 
+        datetime: datetime,
+        address: address || 'Unknown location'
+    });
     updateTruckInStorage(currentTruckId, { trajectory: truck.trajectory });
     
     renderTrajectory(truck, true);
@@ -231,11 +251,9 @@ function addTrajectoryPoint(lat, lng) {
 
 // Delete trajectory point
 function deleteTrajectoryPoint(truck, index) {
-    if (confirm('Видалити цю точку траєкторії?')) {
-        truck.trajectory.splice(index, 1);
-        updateTruckInStorage(truck.id, { trajectory: truck.trajectory });
-        renderTrajectory(truck, true);
-    }
+    truck.trajectory.splice(index, 1);
+    updateTruckInStorage(truck.id, { trajectory: truck.trajectory });
+    renderTrajectory(truck, true);
 }
 
 // Update polyline after point changes
@@ -483,14 +501,12 @@ function saveAndExitEditMode() {
     closeTrajectoryEditPanel();
 }
 
-// Export all data to JSON
-function exportAllData() {
-    const trucks = loadTrucks();
-    
+// Helper function to export truck to file
+function exportTruckToFile(truck) {
     const exportData = {
         version: "1.0",
         exportDate: new Date().toISOString(),
-        trucks: trucks
+        truck: truck
     };
     
     const jsonString = JSON.stringify(exportData, null, 2);
@@ -499,24 +515,115 @@ function exportAllData() {
     const a = document.createElement('a');
     a.href = url;
     
+    const safeName = truck.truck_name.replace(/[^a-zA-Z0-9]/g, '_');
     const now = new Date();
     const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-    a.download = `gps-tracker-data-${dateStr}.json`;
+    a.download = `truck-${safeName}-${dateStr}.json`;
     
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     
-    alert('Дані успішно експортовані!');
+    alert(`Вантажівка "${truck.truck_name}" успішно експортована!`);
 }
 
-// Import data from JSON
-function importAllData() {
+// Export current truck from detail panel
+function exportCurrentTruck() {
+    if (!currentTruckId) {
+        alert('Вантажівка не вибрана');
+        return;
+    }
+    
+    const truck = getTruckById(currentTruckId);
+    if (!truck) {
+        alert('Вантажівка не знайдена');
+        return;
+    }
+    
+    exportTruckToFile(truck);
+}
+
+// Export single truck (opens dropdown)
+function exportSingleTruck() {
+    toggleExportDropdown();
+}
+
+// Toggle export dropdown
+function toggleExportDropdown() {
+    const dropdown = document.getElementById('export-dropdown');
+    const isHidden = dropdown.classList.contains('hidden');
+    
+    if (isHidden) {
+        populateExportDropdown();
+        dropdown.classList.remove('hidden');
+        
+        setTimeout(() => {
+            document.addEventListener('click', closeExportDropdownOutside);
+        }, 0);
+    } else {
+        dropdown.classList.add('hidden');
+        document.removeEventListener('click', closeExportDropdownOutside);
+    }
+}
+
+// Populate export dropdown with trucks
+function populateExportDropdown() {
+    const trucks = loadTrucks();
+    const listContainer = document.getElementById('export-truck-list');
+    
+    if (trucks.length === 0) {
+        listContainer.innerHTML = '<div class="dropdown-empty">Немає вантажівок для експорту</div>';
+        return;
+    }
+    
+    listContainer.innerHTML = trucks.map(truck => {
+        const trajectoryInfo = truck.trajectory ? `${truck.trajectory.length} points` : 'No trajectory';
+        const addressInfo = truck.address || 'No address';
+        
+        return `
+            <div class="dropdown-item" onclick="exportTruckFromDropdown(${truck.id})">
+                <div class="dropdown-item-name">${truck.truck_name}</div>
+                <div class="dropdown-item-info">
+                    ${addressInfo} • ${trajectoryInfo}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Export truck from dropdown
+function exportTruckFromDropdown(truckId) {
+    const truck = getTruckById(truckId);
+    if (!truck) {
+        alert('Вантажівка не знайдена');
+        return;
+    }
+    
+    document.getElementById('export-dropdown').classList.add('hidden');
+    document.removeEventListener('click', closeExportDropdownOutside);
+    
+    exportTruckToFile(truck);
+}
+
+// Close dropdown when clicking outside
+function closeExportDropdownOutside(event) {
+    const dropdown = document.getElementById('export-dropdown');
+    const button = event.target.closest('.btn-export-full');
+    const dropdownElement = event.target.closest('.export-dropdown');
+    
+    if (!button && !dropdownElement) {
+        dropdown.classList.add('hidden');
+        document.removeEventListener('click', closeExportDropdownOutside);
+    }
+}
+
+// Import single truck from JSON
+function importSingleTruck() {
     document.getElementById('import-file-input').click();
 }
 
-// Handle import file
+// Handle import file (single truck)
 function handleImportFile(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -532,34 +639,55 @@ function handleImportFile(event) {
         try {
             const importData = JSON.parse(e.target.result);
             
-            if (!importData.trucks || !Array.isArray(importData.trucks)) {
-                throw new Error('Невірна структура даних');
+            if (!importData.truck) {
+                throw new Error('Невірна структура даних - очікується одна вантажівка');
             }
             
-            const confirmMsg = `Імпортувати ${importData.trucks.length} вантажівок?\n\nУВАГА: Це замінить всі поточні дані!`;
-            if (!confirm(confirmMsg)) {
-                return;
-            }
+            const importedTruck = importData.truck;
             
             // Migrate old data if needed
-            importData.trucks.forEach(truck => {
-                if (truck.trajectory) {
-                    truck.trajectory = truck.trajectory.map(point => {
-                        // Convert old 'time' field to 'datetime'
-                        if (point.time && !point.datetime) {
-                            const now = new Date();
-                            const day = String(now.getDate()).padStart(2, '0');
-                            const month = String(now.getMonth() + 1).padStart(2, '0');
-                            const year = now.getFullYear();
-                            point.datetime = `${point.time} ${day}.${month}.${year}`;
-                            delete point.time;
-                        }
-                        return point;
-                    });
-                }
-            });
+            if (importedTruck.trajectory) {
+                importedTruck.trajectory = importedTruck.trajectory.map(point => {
+                    if (point.time && !point.datetime) {
+                        const now = new Date();
+                        const day = String(now.getDate()).padStart(2, '0');
+                        const month = String(now.getMonth() + 1).padStart(2, '0');
+                        const year = now.getFullYear();
+                        point.datetime = `${point.time} ${day}.${month}.${year}`;
+                        delete point.time;
+                    }
+                    return point;
+                });
+            }
             
-            saveTrucksToStorage(importData.trucks);
+            const trucks = loadTrucks();
+            const existingIndex = trucks.findIndex(t => 
+                t.id === importedTruck.id || t.truck_name === importedTruck.truck_name
+            );
+            
+            if (existingIndex !== -1) {
+                const existingTruck = trucks[existingIndex];
+                const choice = confirm(
+                    `Вантажівка "${existingTruck.truck_name}" вже існує.\n\n` +
+                    `Натисніть OK щоб ОНОВИТИ існуючу вантажівку.\n` +
+                    `Натисніть Cancel щоб ДОДАТИ як нову вантажівку.`
+                );
+                
+                if (choice) {
+                    importedTruck.id = existingTruck.id;
+                    trucks[existingIndex] = importedTruck;
+                } else {
+                    const maxId = trucks.length > 0 ? Math.max(...trucks.map(t => t.id)) : 0;
+                    importedTruck.id = maxId + 1;
+                    trucks.push(importedTruck);
+                }
+            } else {
+                const maxId = trucks.length > 0 ? Math.max(...trucks.map(t => t.id)) : 0;
+                importedTruck.id = maxId + 1;
+                trucks.push(importedTruck);
+            }
+            
+            saveTrucksToStorage(trucks);
             location.reload();
             
         } catch (error) {
@@ -570,6 +698,19 @@ function handleImportFile(event) {
     
     reader.readAsText(file);
     event.target.value = '';
+}
+
+// Switch sidebar tab
+function switchSidebarTab(tabName) {
+    document.querySelectorAll('.menu-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+    
+    document.querySelectorAll('.sidebar-tab-content').forEach(content => {
+        content.classList.add('hidden');
+    });
+    document.getElementById(`sidebar-tab-${tabName}`).classList.remove('hidden');
 }
 
 // Initialize on load

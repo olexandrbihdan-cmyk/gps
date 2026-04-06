@@ -640,21 +640,71 @@ input[type="number"].form-control::-webkit-inner-spin-button {
     font-size: 14px;
 }
 
-/* Data Management in Sidebar */
-.data-management {
-    padding: 15px;
-    border-bottom: 2px solid #ddd;
+/* Sidebar Menu */
+.sidebar-menu {
     display: flex;
-    gap: 10px;
+    border-bottom: 2px solid #ddd;
+    background: #f5f5f5;
 }
 
-.data-management .btn {
+.menu-tab {
     flex: 1;
-    padding: 10px;
-    font-size: 13px;
+    padding: 12px 10px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666;
+    transition: all 0.3s;
+    border-bottom: 3px solid transparent;
 }
 
-.btn-export {
+.menu-tab:hover {
+    background: #e8e8e8;
+    color: #333;
+}
+
+.menu-tab.active {
+    color: #2196F3;
+    border-bottom-color: #2196F3;
+    background: white;
+}
+
+/* Tab Content */
+.sidebar-tab-content {
+    display: block;
+}
+
+.sidebar-tab-content.hidden {
+    display: none;
+}
+
+/* Settings Section */
+.settings-section {
+    padding: 20px 15px;
+}
+
+.settings-section h3 {
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.data-management-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.data-management-vertical .btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+}
+
+.btn-export-full,
+.btn-import-full {
     background: #4CAF50;
     color: white;
     border: none;
@@ -663,39 +713,29 @@ input[type="number"].form-control::-webkit-inner-spin-button {
     transition: background 0.3s;
 }
 
-.btn-export:hover {
+.btn-export-full:hover {
     background: #45a049;
 }
 
-.btn-import {
+.btn-import-full {
     background: #2196F3;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.3s;
 }
 
-.btn-import:hover {
+.btn-import-full:hover {
     background: #1976D2;
 }
 
-/* Data Management in Detail Panel */
-.data-management-panel {
+/* Export Section in Detail Panel */
+.export-section {
     margin-top: 15px;
     padding-top: 15px;
     border-top: 1px solid #ddd;
-    display: flex;
-    gap: 10px;
 }
 
-.data-management-panel .btn {
-    flex: 1;
-    padding: 10px;
-    font-size: 13px;
-}
-
-.btn-export-small {
+.btn-export-current {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
     background: #4CAF50;
     color: white;
     border: none;
@@ -704,21 +744,80 @@ input[type="number"].form-control::-webkit-inner-spin-button {
     transition: background 0.3s;
 }
 
-.btn-export-small:hover {
+.btn-export-current:hover {
     background: #45a049;
 }
 
-.btn-import-small {
-    background: #2196F3;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.3s;
+/* Export Dropdown Container */
+.export-dropdown-container {
+    position: relative;
 }
 
-.btn-import-small:hover {
-    background: #1976D2;
+/* Export Dropdown */
+.export-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 2px solid #4CAF50;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 5px;
+}
+
+.export-dropdown.hidden {
+    display: none;
+}
+
+.dropdown-header {
+    padding: 10px 15px;
+    background: #f5f5f5;
+    border-bottom: 1px solid #ddd;
+    font-weight: 500;
+    font-size: 13px;
+    color: #666;
+}
+
+.dropdown-list {
+    padding: 5px 0;
+}
+
+.dropdown-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background 0.2s;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item:hover {
+    background: #e8f5e9;
+}
+
+.dropdown-item-name {
+    font-weight: 500;
+    color: #333;
+    font-size: 14px;
+}
+
+.dropdown-item-info {
+    font-size: 12px;
+    color: #666;
+    margin-top: 3px;
+}
+
+.dropdown-empty {
+    padding: 20px 15px;
+    text-align: center;
+    color: #999;
+    font-size: 13px;
 }
 
 /* Modal */

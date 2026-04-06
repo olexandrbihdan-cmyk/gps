@@ -15,20 +15,49 @@
 
     <div id="sidebar" class="sidebar">
         <div class="sidebar-header">
-            <h2>Lista Pojazdów</h2>
+            <h2>GPS Truck Tracker</h2>
         </div>
         
-        <!-- Кнопки експорту/імпорту -->
-        <div class="data-management">
-            <button class="btn btn-export" onclick="exportAllData()">
-                📥 Export Data
+        <!-- Меню вкладок -->
+        <div class="sidebar-menu">
+            <button class="menu-tab active" data-tab="trucks" onclick="switchSidebarTab('trucks')">
+                Lista Pojazdów
             </button>
-            <button class="btn btn-import" onclick="importAllData()">
-                📤 Import Data
+            <button class="menu-tab" data-tab="settings" onclick="switchSidebarTab('settings')">
+                ⚙️ Ustawienia
             </button>
         </div>
         
-        <div id="truck-list"></div>
+        <!-- Вкладка Lista Pojazdów -->
+        <div id="sidebar-tab-trucks" class="sidebar-tab-content active">
+            <div id="truck-list"></div>
+        </div>
+        
+        <!-- Вкладка Ustawienia -->
+        <div id="sidebar-tab-settings" class="sidebar-tab-content hidden">
+            <div class="settings-section">
+                <h3>Zarządzanie Danymi</h3>
+                <div class="data-management-vertical">
+                    <!-- Export з випадаючим меню -->
+                    <div class="export-dropdown-container">
+                        <button class="btn btn-export-full" onclick="toggleExportDropdown()">
+                            📥 Export Truck
+                        </button>
+                        <div id="export-dropdown" class="export-dropdown hidden">
+                            <div class="dropdown-header">Wybierz pojazd:</div>
+                            <div id="export-truck-list" class="dropdown-list">
+                                <!-- Список вантажівок генерується динамічно -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Import залишається без змін -->
+                    <button class="btn btn-import-full" onclick="importSingleTruck()">
+                        📤 Import Truck
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="map"></div>
@@ -123,13 +152,10 @@
                 <button class="btn btn-cancel" onclick="closeDetailPanel()">Anuluj</button>
             </div>
             
-            <!-- Кнопки експорту/імпорту в панелі деталей -->
-            <div class="data-management-panel">
-                <button class="btn btn-export-small" onclick="exportAllData()">
-                    📥 Export All
-                </button>
-                <button class="btn btn-import-small" onclick="importAllData()">
-                    📤 Import
+            <!-- Export Section -->
+            <div class="export-section">
+                <button class="btn btn-export-current" onclick="exportCurrentTruck()">
+                    📥 Export Truck
                 </button>
             </div>
             
